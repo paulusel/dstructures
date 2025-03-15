@@ -6,7 +6,6 @@ typedef struct {
     int size;
     size_t elem_size;
     int table_size;
-    int prime_indx;
 
     unsigned int (*hash_function)(void* key);
     int (*compare)(const void* key1, const void* key2);
@@ -14,7 +13,7 @@ typedef struct {
     unsigned char *data;
     unsigned char *status;// 0 - free, 1 = occuppied
 
-    unsigned char *temp;
+    struct htable_private_data *p_data;
 } htable;
 
 void htable_init(htable *ht, size_t elem_size,

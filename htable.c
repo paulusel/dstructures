@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct htable_private_data {
+    unsigned char *temp;
+    int prime_indx;
+};
+
 static const unsigned int hash_table_primes[] = {53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317,
     196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611,
     402653189, 805306457, 1610612741 };
@@ -18,8 +23,8 @@ static void htable_grow(htable *ht){
     unsigned char *old_data = ht->data;
     unsigned char *old_status = ht->status;
 
-    ++ht->prime_indx;
-    ht->table_size = hash_table_primes[ht->prime_indx];
+    ++ht->p_data->prime_indx;
+    ht->table_size = hash_table_primes[ht->p_data->prime_indx];
     ht->size = 0;
 
     ht->data = malloc(ht->table_size * ht->elem_size);
@@ -48,21 +53,22 @@ void htable_init(htable *ht, size_t elem_size, unsigned int (*hash_function)(voi
     ht->compare = compare;
 
     ht->size = 0;
-    ht->prime_indx = 0;
-    ht->table_size = hash_table_primes[ht->prime_indx];
+    ht->p_data = malloc(sizeof(struct htable_private_data));
+    ht->p_data->prime_indx = 0;
+    ht->table_size = hash_table_primes[ht->p_data->prime_indx];
 
     ht->data = malloc(ht->elem_size * ht->table_size);
     ht->status = calloc(ht->table_size, ht->elem_size);
-    ht->temp = malloc(2*ht->elem_size);
+    ht->p_data->temp = malloc(2*ht->elem_size);
 }
 
 void *htable_insert(htable *ht, void *val) {
     if((double)ht->size/ht->table_size > 0.7) htable_grow(ht);
 
-    memcpy(ht->temp, val, ht->elem_size);
+    memcpy(ht->p_data->temp, val, ht->elem_size);
 
-    unsigned char *target, *pos = NULL, *temp = ht->temp + ht->elem_size;
-    uint32_t indx = index_of(ht, ht->temp), probe = 0, desired_indx, offset;
+    unsigned char *target, *pos = NULL, *temp = ht->p_data->temp + ht->elem_size;
+    uint32_t indx = index_of(ht, ht->p_data->temp), probe = 0, desired_indx, offset;
 
     for(;;){
         target = ht->data + indx * ht->elem_size;
@@ -71,14 +77,14 @@ void *htable_insert(htable *ht, void *val) {
             ++ht->size;
 
             if(pos) {
-                memcpy(target, ht->temp, ht->elem_size);
+                memcpy(target, ht->p_data->temp, ht->elem_size);
                 return pos;
             }
 
             return target;
         }
 
-        if(ht->compare(ht->temp, target) == 0) return target;
+        if(ht->compare(ht->p_data->temp, target) == 0) return target;
 
         desired_indx = index_of(ht, target);
         offset = (indx - desired_indx + ht->table_size) % ht->table_size;
@@ -86,8 +92,8 @@ void *htable_insert(htable *ht, void *val) {
         if(probe > offset) {
             if(!pos) pos = target;
             memcpy(temp, target, ht->elem_size);
-            memcpy(target, ht->temp, ht->elem_size);
-            memcpy(ht->temp, temp, ht->elem_size);
+            memcpy(target, ht->p_data->temp, ht->elem_size);
+            memcpy(ht->p_data->temp, temp, ht->elem_size);
             probe = offset;
         }
 
@@ -148,5 +154,5 @@ void htable_remove(htable *ht, void *val) {
 void htable_destroy(htable *ht) {
     free(ht->data);
     free(ht->status);
-    free(ht->temp);
+    free(ht->p_data->temp);
 }
