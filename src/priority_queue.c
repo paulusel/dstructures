@@ -69,13 +69,17 @@ void priority_queue_pop(priority_queue *que){
     if(que->size > 1) heapify(que, 0);
 }
 
-void priority_queue_init(priority_queue *q, size_t elem_size, int (*cmp)(const void*, const void*), size_t count){
+priority_queue* priority_queue_create(size_t elem_size, int (*cmp)(const void*, const void*), size_t count) {
+    priority_queue *q = malloc(sizeof(priority_queue));
+
     q->size = 0;
     q->capacity = count;
     q->elem_size = elem_size;
     q->cmp = cmp;
 
     q->data = malloc(q->capacity*q->elem_size);
+
+    return q;
 }
 
 void priority_queue_destroy(priority_queue *q){
@@ -83,4 +87,5 @@ void priority_queue_destroy(priority_queue *q){
         free(q->data);
         q->data = NULL;
     }
+    free(q);
 }

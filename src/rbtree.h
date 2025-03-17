@@ -22,7 +22,7 @@ struct _rbtree {
 };
 typedef struct _rbtree rbtree;
 
-void rbtree_init(rbtree *tree, size_t elem_size, int (*cmp)(const void* a, const void* b));
+rbtree* rbtree_create(size_t elem_size, int (*cmp)(const void* a, const void* b));
 
 void* rbtree_insert(rbtree *tree, void *val);
 rbtree_node* rbtree_search(rbtree *tree, void *val);

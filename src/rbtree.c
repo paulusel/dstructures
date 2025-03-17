@@ -173,7 +173,10 @@ static rbtree_node* rbtree_max(rbtree *tree, rbtree_node *nd) {
     return nd;
 }
 
-void rbtree_init(rbtree *tree, size_t elem_size, int (*cmp)(const void* a, const void* b)){
+//void rbtree_init( size_t elem_size, int (*cmp)(const void* a, const void* b)){
+rbtree* rbtree_create(size_t elem_size, int (*cmp)(const void* a, const void* b)){
+    rbtree *tree = malloc(sizeof(rbtree));
+
     tree->sentinel = (rbtree_node*)malloc(sizeof(rbtree_node));
     tree->sentinel->color = RBTREE_COLOR_BLACK;
 
@@ -181,6 +184,8 @@ void rbtree_init(rbtree *tree, size_t elem_size, int (*cmp)(const void* a, const
     tree->root = tree->sentinel;
     tree->elem_size = elem_size;
     tree->size = 0;
+
+    return tree;
 }
 
 rbtree_node* rbtree_search(rbtree *tree, void *val) {
@@ -335,4 +340,5 @@ void rbtree_destroy(rbtree *tree) {
 
     tree->sentinel = NULL;
     tree->root = NULL;
+    free(tree);
 }

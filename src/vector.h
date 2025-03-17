@@ -12,8 +12,8 @@ struct vector {
 
 typedef struct vector vector;
 
-void vector_init(vector *v, size_t elem_size, size_t count);
-void vector_copy(vector *src, vector *dst);
+vector* vector_create(size_t elem_size, size_t count);
+vector* vector_duplicate(vector *v);
 
 void vector_push_back(vector *v, void *val);
 void vector_pop_back(vector *v);

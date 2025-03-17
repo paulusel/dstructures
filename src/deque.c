@@ -23,7 +23,9 @@ static node* new_node(size_t elem_size){
     return nd;
 }
 
-void deque_init(deque* dq, size_t elem_size) {
+deque* deque_create(size_t elem_size) {
+    deque* dq = malloc(sizeof(deque));
+
     dq->elem_size = elem_size;
     dq->size = 0;
 
@@ -31,6 +33,8 @@ void deque_init(deque* dq, size_t elem_size) {
     dq->front_data = dq->back_data = dq->front->data;
 
     dq->front_pos = NODE_CAPACITY/2, dq->back_pos = dq->front_pos - 1;
+
+    return dq;
 }
 
 void deque_push_back(deque* dq, void* val) {
@@ -135,4 +139,6 @@ void deque_destory(deque* dq) {
         free(nd);
     }
     dq->front = dq->front_data = dq->back = dq->back_data = NULL;
+
+    free(dq);
 }

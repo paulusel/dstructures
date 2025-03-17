@@ -9,7 +9,7 @@ typedef struct {
     size_t capacity;
 } priority_queue;
 
-void priority_queue_init(priority_queue *q, size_t eleme_size, int (*cmp)(const void*, const void*), size_t count);
+priority_queue* priority_queue_create(size_t elem_size, int (*cmp)(const void*, const void*), size_t count);
 void priority_queue_destroy(priority_queue *q);
 
 void priority_queue_push(priority_queue *q, void *val);

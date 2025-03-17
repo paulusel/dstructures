@@ -3,23 +3,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-void vector_init(vector *v, size_t elem_size, size_t count) {
+vector* vector_create(size_t elem_size, size_t count) {
+    vector* v = malloc(sizeof(vector));
+
     v->size = 0;
     v->elem_size = elem_size;
     v->capacity = count;
 
     v->data = malloc(elem_size*v->capacity);
+    return v;
 }
 
-void vector_copy(vector *src, vector *dst) {
-    if(!dst->data) return;
+vector* vector_duplicate(vector *v) {
+    vector *new_vector = malloc(sizeof(vector));
 
-    dst->size = src->size;
-    dst->capacity = src->size;
-    dst->elem_size = src->elem_size;
+    new_vector->size = v->size;
+    new_vector->capacity = v->size;
+    new_vector->elem_size = v->elem_size;
 
-    dst->data = realloc(dst->data, dst->size*dst->elem_size);
-    memcpy(dst->data, src->data, dst->size*dst->elem_size);
+    new_vector->data = realloc(new_vector->data, new_vector->size*new_vector->elem_size);
+    memcpy(new_vector->data, v->data, new_vector->size*new_vector->elem_size);
+
+    return new_vector;
 }
 
 void vector_push_back(vector *v, void *val) {
@@ -69,5 +74,6 @@ void* vector_back(vector* v) {
 }
 
 void vector_destroy(vector *v) {
-    if(v->data) free(v->data);
+    free(v->data);
+    free(v);
 }

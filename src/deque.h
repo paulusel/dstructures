@@ -18,7 +18,7 @@ struct deque {
 
 typedef struct deque deque;
 
-void deque_init(deque* dq, size_t elem_size);
+deque* deque_create(size_t elem_size);
 
 void deque_push_back(deque* dq, void* val);
 void deque_push_front(deque* dq, void* val);
