@@ -1,4 +1,4 @@
-#include "priority_queue.h"
+#include "dstruct/priority_queue.h"
 
 #include <stdlib.h>
 #include <string.h>

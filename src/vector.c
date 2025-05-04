@@ -1,4 +1,4 @@
-#include "vector.h"
+#include "dstruct/vector.h"
 
 #include <stdlib.h>
 #include <string.h>

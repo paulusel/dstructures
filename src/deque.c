@@ -1,4 +1,4 @@
-#include "deque.h"
+#include "dstruct/deque.h"
 
 #include <stddef.h>
 #include <stdlib.h>
