@@ -38,6 +38,7 @@ bool dlist_insert(dlist* list, node* nd, void* val) {
     nd->prev->next = new_node;
     nd->prev = new_node;
 
+    ++list->size;
     return true;
 }
 
@@ -46,6 +47,8 @@ bool dlist_remove(dlist* list, node* nd) {
     nd->prev->next = nd->next;
     nd->next->prev = nd->prev;
     free(nd);
+
+    --list->size;
     return true;
 }
 
