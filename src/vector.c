@@ -3,6 +3,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+static inline void shrink_vector(vector* v) {
+    v->capacity /= 2;
+    v->data = realloc(v->data, v->elem_size*v->capacity);
+}
+
+static inline void consider_expanding(vector *v) {
+    if(v->size == v->capacity) {
+        v->capacity *= 2;
+        v->data = realloc(v->data, v->capacity*v->elem_size);
+    }
+}
+
+static inline void *pointer_to(vector *v, size_t pos) {
+    return (char*)v->data + pos*v->elem_size;
+}
+
 vector* vector_create(size_t elem_size, size_t count) {
     vector* v = malloc(sizeof(vector));
 
@@ -14,7 +30,7 @@ vector* vector_create(size_t elem_size, size_t count) {
     return v;
 }
 
-vector* vector_duplicate(vector *v) {
+vector* vector_clone(vector *v) {
     vector *new_vector = malloc(sizeof(vector));
 
     new_vector->size = v->size;
@@ -29,11 +45,7 @@ vector* vector_duplicate(vector *v) {
 
 void vector_push_back(vector *v, void *val) {
     if(!v->data) return;
-
-    if(v->size == v->capacity) {
-        v->capacity *= 2;
-        v->data = realloc(v->data, v->capacity*v->elem_size);
-    }
+    consider_expanding(v);
 
     void* target = (char*)v->data + v->elem_size*v->size;
     memcpy(target, val, v->elem_size);
@@ -54,23 +66,28 @@ void vector_append(vector *v, void *val, size_t count){
 
 void vector_pop_back(vector *v) {
     if(!v->data) return;
-
-    if(v->size * 2 < v->capacity) {
-        v->capacity /= 2;
-        v->data = realloc(v->data, v->elem_size*v->capacity);
-    }
-
     --v->size;
+    if(v->size * 2 < v->capacity) shrink_vector(v);
 }
 
 void* vector_at(vector *v, size_t pos) {
-    if(!v->data && pos >= v->size) return NULL;
-
-    return (char*)v->data + pos*v->elem_size;
+    if(!v->data || pos < 0 || pos >= v->size) return NULL;
+    return pointer_to(v, pos);
 }
 
 void* vector_back(vector* v) {
     return vector_at(v, v->size - 1);
+}
+
+void vector_remove_unordered(vector *v, size_t pos) {
+    if(!v->data || pos < 0 || pos >= v->size) return;
+
+    void *target = pointer_to(v, pos);
+    void *end = pointer_to(v, v->size-1);
+
+    if(target != end) memcpy(target, end, v->size);
+    --v->size;
+    if(v->size * 2 < v->capacity) shrink_vector(v);
 }
 
 void vector_destroy(vector *v) {
