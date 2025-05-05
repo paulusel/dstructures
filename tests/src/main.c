@@ -7,9 +7,12 @@
 #include <stdlib.h>
 
 #include "dstruct/dlinked_list.h"
+#include "dstruct/vector.h"
 
 int fd = -1;
+
 void test_dlist();
+void test_vector();
 int random_number();
 
 int main(int argc, char *argv[]) {
@@ -26,6 +29,9 @@ int main(int argc, char *argv[]) {
 
     if(strcmp(argv[1], "--dlist") == 0) {
         test_dlist();
+    }
+    else if(strcmp(argv[1], "--vector") == 0) {
+        test_vector();
     }
     else {
         printf("unrecognized test\n");
@@ -62,6 +68,34 @@ void test_dlist() {
         nd = nd->next;
     }
     dlist_destrory(list);
+}
+
+
+void test_vector() {
+    vector *v = vector_create(sizeof(int), 100);
+
+    for(int i = 0; i<1000; i++) {
+
+        int random = random_number();
+        switch (random % 3) {
+            case 0:
+                vector_push_back(v, &random);
+                break;
+            case 2:
+                vector_pop_back(v);
+                break;
+            default: {
+                int indx = v->size ? random % v->size : 0;
+                    vector_remove_unordered(v, indx);
+                }
+        }
+        printf("\n");
+        int *data = (int*)v->data;
+        for(int i = 0; i<v->size; ++i) {
+            printf("%d ", data[i]);
+        }
+    }
+    vector_destroy(v);
 }
 
 int random_number() {
