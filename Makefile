@@ -1,5 +1,5 @@
 config:
-	cmake -S . -B ./build -G Ninja
+	cmake -S . -B ./build -G Ninja -DBUILD_TEST=ON
 compile:
 	cmake --build ./build
 clear:
