@@ -6,6 +6,7 @@
 static inline void consider_shrinking(vector* v) {
     if(v->size * 2 < v->capacity) {
         v->capacity /= 2;
+        v->capacity = v->capacity < 2 ? 2 : v->capacity;
         v->data = realloc(v->data, v->elem_size*v->capacity);
     }
 }
