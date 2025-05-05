@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static inline void shrink_vector(vector* v) {
-    v->capacity /= 2;
-    v->data = realloc(v->data, v->elem_size*v->capacity);
+static inline void consider_shrinking(vector* v) {
+    if(v->size * 2 < v->capacity) {
+        v->capacity /= 2;
+        v->data = realloc(v->data, v->elem_size*v->capacity);
+    }
 }
 
 static inline void consider_expanding(vector *v) {
@@ -67,7 +69,7 @@ void vector_append(vector *v, void *val, size_t count){
 void vector_pop_back(vector *v) {
     if(!v->data) return;
     --v->size;
-    if(v->size * 2 < v->capacity) shrink_vector(v);
+    if(v->size * 2 < v->capacity) consider_shrinking(v);
 }
 
 void* vector_at(vector *v, size_t pos) {
@@ -87,7 +89,7 @@ void vector_remove_unordered(vector *v, size_t pos) {
 
     if(target != end) memcpy(target, end, v->size);
     --v->size;
-    if(v->size * 2 < v->capacity) shrink_vector(v);
+    consider_shrinking(v);
 }
 
 void vector_destroy(vector *v) {
