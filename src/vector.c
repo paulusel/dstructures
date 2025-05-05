@@ -23,22 +23,27 @@ static inline void *pointer_to(vector *v, size_t pos) {
 }
 
 vector* vector_create(size_t elem_size, size_t count) {
+    if(elem_size < 1 || count < 0) return nullptr;
+
     vector* v = malloc(sizeof(vector));
-
-    v->size = 0;
-    v->elem_size = elem_size;
-    v->capacity = count;
-
+    *v = (vector) {
+        .size = 0,
+        .elem_size = elem_size,
+        .capacity = count > 2 ? count : 2,
+    };
     v->data = malloc(elem_size*v->capacity);
+
     return v;
 }
 
 vector* vector_clone(vector *v) {
     vector *new_vector = malloc(sizeof(vector));
 
-    new_vector->size = v->size;
-    new_vector->capacity = v->size;
-    new_vector->elem_size = v->elem_size;
+    *new_vector = (vector){
+        .size = v->size,
+        .capacity = v->size,
+        .elem_size = v->elem_size
+    };
 
     new_vector->data = realloc(new_vector->data, new_vector->size*new_vector->elem_size);
     memcpy(new_vector->data, v->data, new_vector->size*new_vector->elem_size);
