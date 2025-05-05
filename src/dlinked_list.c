@@ -5,29 +5,29 @@
 dlist* dlist_create() {
     dlist* list = (dlist*)malloc(sizeof(dlist));
 
-    node* head = (node*)malloc(sizeof(node));
-    node* tail = (node*)malloc(sizeof(node));
+    node* end = (node*)malloc(sizeof(node));
 
-    if(!list || !head || !tail) {
+    if(!list || !end) {
         free(list);
-        free(head);
-        free(tail);
+        free(end);
         return nullptr;
     }
 
-    head->next = tail;
-    tail->prev = head;
-    head->prev = tail->next = nullptr;
+    end->next = end;
+    end->prev = end;
+    end->data = nullptr;
 
-    list->head = head;
-    list->tail = tail;
+    *list = (dlist){
+        .end = end,
+        .size = 0
+    };
 
     return list;
 }
 
 // insert before nd
 bool dlist_insert(dlist* list, node* nd, void* val) {
-    if(!nd || nd == list->head) return false;
+    if(!nd) return false;
 
     node* new_node = (node*)malloc(sizeof(node));
 
@@ -43,21 +43,21 @@ bool dlist_insert(dlist* list, node* nd, void* val) {
 }
 
 bool dlist_remove(dlist* list, node* nd) {
-    if(!nd || nd == list->head || nd == list->tail) return false;
+    if(!nd || nd == list->end) return false;
     nd->prev->next = nd->next;
     nd->next->prev = nd->prev;
     free(nd);
-
     --list->size;
     return true;
 }
 
 void dlist_destrory(dlist* list) {
-    node *tmp, *tip = list->head;
-    while(tip) {
+    node *tmp, *tip = list->end->next;
+    while(tip != list->end) {
         tmp = tip;
         tip = tip->next;
         free(tmp);
     }
+    free(list->end);
     free(list);
 }
