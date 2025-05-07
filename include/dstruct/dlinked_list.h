@@ -18,4 +18,4 @@ dlist* dlist_create();
 bool dlist_insert(dlist* list, node* nd, void* val);
 bool dlist_remove(dlist* list, node* nd);
 
-void dlist_destrory(dlist* list);
+void dlist_destroy(dlist* list);

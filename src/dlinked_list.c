@@ -51,7 +51,7 @@ bool dlist_remove(dlist* list, node* nd) {
     return true;
 }
 
-void dlist_destrory(dlist* list) {
+void dlist_destroy(dlist* list) {
     node *tmp, *tip = list->end->next;
     while(tip != list->end) {
         tmp = tip;
